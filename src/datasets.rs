@@ -3,8 +3,9 @@ use serde::{Deserialize, Serialize};
 use crate::{Result, client::Client};
 
 impl Client {
-    pub async fn get_datasets(&self) -> Result<ListDatasetsResponse> {
-        self.http_json_v1(reqwest::Method::GET, "/datasets").await
+    pub async fn datasets(&self) -> Result<ListDatasetsResponse> {
+        self.http_json_v1(reqwest::Method::GET, "/datasets", |request| request)
+            .await
     }
 }
 

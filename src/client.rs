@@ -23,20 +23,22 @@ impl Client {
         })
     }
 
-    pub(crate) async fn http_json_v1<T>(
+    pub(crate) async fn http_json_v1<T, F>(
         &self,
         method: Method,
         path: &str,
+        configure: F,
     ) -> Result<T>
     where
         T: DeserializeOwned,
+        F: FnOnce(reqwest::RequestBuilder) -> reqwest::RequestBuilder,
     {
         let url = format!(
             "{}/{}",
             self.base_url.trim_end_matches('/'),
             path.trim_start_matches('/')
         );
-        let request = self.http.request(method, url).header(
+        let request = configure(self.http.request(method, url)).header(
             header::AUTHORIZATION,
             format!("Bearer {}", self.api_key),
         );
