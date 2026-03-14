@@ -12,3 +12,4 @@ thiserror = "2"
 arrow-array = "56"
 arrow-ipc = "56"
 arrow-schema = "56"
+mpera = { git = "https://github.com/ronfriedhaber/autark.git", package = "mpera" }
