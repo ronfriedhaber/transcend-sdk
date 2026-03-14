@@ -1,13 +1,54 @@
+use reqwest::{Method, header};
+use serde::de::DeserializeOwned;
+
+use crate::{Result, error::Error};
+
 pub struct Client {
     pub base_url: String,
     pub api_key: String,
+    pub(crate) http: reqwest::Client,
 }
 
 impl Client {
-    pub fn new(base_url: impl Into<String>, api_key: impl Into<String>) -> Self {
-        Self {
-            base_url: base_url.into(),
-            api_key: api_key.into(),
+    pub fn new(base_url: impl Into<String>, api_key: impl Into<String>) -> Result<Self> {
+        let api_key = api_key.into();
+        if api_key.trim().is_empty() {
+            return Err(Error::EmptyApiKey);
         }
+
+        Ok(Self {
+            base_url: base_url.into(),
+            api_key,
+            http: reqwest::Client::new(),
+        })
+    }
+
+    pub(crate) async fn http_json_v1<T>(
+        &self,
+        method: Method,
+        path: &str,
+    ) -> Result<T>
+    where
+        T: DeserializeOwned,
+    {
+        let url = format!(
+            "{}/{}",
+            self.base_url.trim_end_matches('/'),
+            path.trim_start_matches('/')
+        );
+        let request = self.http.request(method, url).header(
+            header::AUTHORIZATION,
+            format!("Bearer {}", self.api_key),
+        );
+
+        let response = request.send().await?;
+        let status = response.status();
+
+        if !status.is_success() {
+            let body = response.text().await.unwrap_or_default();
+            return Err(Error::Api { status, body });
+        }
+
+        Ok(response.json().await?)
     }
 }
