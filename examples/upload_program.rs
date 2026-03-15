@@ -9,10 +9,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let client = common::client_from_env_default()?;
     let response = client
-        .upload_program(
-            &program,
-            Some("transcend-sdk-example-program".to_string()),
-        )
+        .upload_program(&program, Some("transcend-sdk-example-program".to_string()))
         .await?;
 
     println!("{response:#?}");

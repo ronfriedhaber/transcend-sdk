@@ -15,10 +15,7 @@ impl Client {
         .await
     }
 
-    pub async fn programs(
-        &self,
-        limit: Option<usize>,
-    ) -> Result<ListProgramsResponse> {
+    pub async fn programs(&self, limit: Option<usize>) -> Result<ListProgramsResponse> {
         self.http_json_v1(reqwest::Method::GET, "/programs", |request| {
             request.query(&ProgramsQuery { limit })
         })

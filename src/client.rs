@@ -38,10 +38,8 @@ impl Client {
             self.base_url.trim_end_matches('/'),
             path.trim_start_matches('/')
         );
-        let request = configure(self.http.request(method, url)).header(
-            header::AUTHORIZATION,
-            format!("Bearer {}", self.api_key),
-        );
+        let request = configure(self.http.request(method, url))
+            .header(header::AUTHORIZATION, format!("Bearer {}", self.api_key));
 
         let response = request.send().await?;
         let status = response.status();
