@@ -8,11 +8,9 @@ use super::DatasetMetadata;
 
 impl Client {
     pub async fn dataset(&self, id_or_alias: &str) -> Result<DatasetMetadata> {
-        self.http_json_v1(
-            reqwest::Method::GET,
-            &format!("/datasets/{id_or_alias}"),
-            |request| request.query(&DatasetReadQuery::metadata()),
-        )
+        self.http_json_v1(reqwest::Method::GET, &format!("/datasets/{id_or_alias}"), |request| {
+            request
+        })
         .await
     }
 
@@ -24,7 +22,7 @@ impl Client {
         self.http_json_v1(
             reqwest::Method::GET,
             &format!("/datasets/{id_or_alias}"),
-            |request| request.query(&DatasetReadQuery::json(options)),
+            |request| request.query(&DatasetJsonReadQuery::from(options)),
         )
         .await
     }
@@ -38,7 +36,7 @@ impl Client {
             .http_bytes_v1(
                 reqwest::Method::GET,
                 &format!("/datasets/{id_or_alias}"),
-                |request| request.query(&DatasetReadQuery::ipc(options)),
+                |request| request.query(&DatasetIpcReadQuery::from(options)),
             )
             .await?;
 
@@ -47,47 +45,34 @@ impl Client {
 }
 
 #[derive(Debug, Clone, Copy, Serialize)]
-#[serde(rename_all = "snake_case")]
-enum DatasetReadFormat {
-    Metadata,
-    Json,
-    Ipc,
-}
-
-#[derive(Debug, Clone, Serialize)]
-struct DatasetReadQuery {
-    format: DatasetReadFormat,
+struct DatasetJsonReadQuery {
+    format: &'static str,
     #[serde(skip_serializing_if = "Option::is_none")]
     max_rows: Option<usize>,
+}
+
+impl From<DatasetJsonReadOptions> for DatasetJsonReadQuery {
+    fn from(options: DatasetJsonReadOptions) -> Self {
+        Self {
+            format: "json",
+            max_rows: options.max_rows,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, Serialize)]
+struct DatasetIpcReadQuery {
+    format: &'static str,
     #[serde(skip_serializing_if = "Option::is_none")]
     max_batches: Option<usize>,
     #[serde(skip_serializing_if = "Option::is_none")]
     latest: Option<bool>,
 }
 
-impl DatasetReadQuery {
-    fn metadata() -> Self {
+impl From<DatasetIpcReadOptions> for DatasetIpcReadQuery {
+    fn from(options: DatasetIpcReadOptions) -> Self {
         Self {
-            format: DatasetReadFormat::Metadata,
-            max_rows: None,
-            max_batches: None,
-            latest: None,
-        }
-    }
-
-    fn json(options: DatasetJsonReadOptions) -> Self {
-        Self {
-            format: DatasetReadFormat::Json,
-            max_rows: options.max_rows,
-            max_batches: None,
-            latest: None,
-        }
-    }
-
-    fn ipc(options: DatasetIpcReadOptions) -> Self {
-        Self {
-            format: DatasetReadFormat::Ipc,
-            max_rows: None,
+            format: "ipc",
             max_batches: options.max_batches,
             latest: options.latest,
         }
@@ -99,8 +84,23 @@ pub struct DatasetJsonReadOptions {
     pub max_rows: Option<usize>,
 }
 
+impl DatasetJsonReadOptions {
+    pub fn new(max_rows: Option<usize>) -> Self {
+        Self { max_rows }
+    }
+}
+
 #[derive(Debug, Clone, Copy, Default)]
 pub struct DatasetIpcReadOptions {
     pub max_batches: Option<usize>,
     pub latest: Option<bool>,
+}
+
+impl DatasetIpcReadOptions {
+    pub fn new(max_batches: Option<usize>, latest: Option<bool>) -> Self {
+        Self {
+            max_batches,
+            latest,
+        }
+    }
 }
