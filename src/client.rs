@@ -59,4 +59,32 @@ impl Client {
 
         Ok(response.json().await?)
     }
+
+    pub(crate) async fn http_bytes_v1<F>(
+        &self,
+        method: Method,
+        path: &str,
+        configure: F,
+    ) -> Result<Vec<u8>>
+    where
+        F: FnOnce(reqwest::RequestBuilder) -> reqwest::RequestBuilder,
+    {
+        let url = format!(
+            "{}/{}",
+            self.base_url.trim_end_matches('/'),
+            path.trim_start_matches('/')
+        );
+        let request = configure(self.http.request(method, url))
+            .header(header::AUTHORIZATION, format!("Bearer {}", self.api_key));
+
+        let response = request.send().await?;
+        let status = response.status();
+
+        if !status.is_success() {
+            let body = response.text().await.unwrap_or_default();
+            return Err(Error::Api { status, body });
+        }
+
+        Ok(response.bytes().await?.to_vec())
+    }
 }
