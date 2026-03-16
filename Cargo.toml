@@ -6,10 +6,6 @@ description = "Transcend SDK"
 readme = "README.md"
 license = "AGPL-3.0-or-later"
 
-[features]
-default = []
-program-upload = ["dep:mpera"]
-
 [dependencies]
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
 serde = { version = "1", features = ["derive"] }
@@ -19,8 +15,4 @@ thiserror = "2"
 arrow-array = "56"
 arrow-ipc = "56"
 arrow-schema = "56"
-mpera = { version = "0.1.0", git = "https://github.com/ronfriedhaber/autark.git", package = "mpera", optional = true }
-
-[[example]]
-name = "upload_program"
-required-features = ["program-upload"]
+mpera = { version = "0.1.0", git = "https://github.com/ronfriedhaber/autark.git", package = "mpera" }

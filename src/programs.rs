@@ -2,10 +2,8 @@ use serde::{Deserialize, Serialize};
 
 use crate::{Result, client::Client};
 
-#[cfg(feature = "program-upload")]
 pub mod upload;
 
-#[cfg(feature = "program-upload")]
 pub use upload::ProgramResponse;
 
 impl Client {
