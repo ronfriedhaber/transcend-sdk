@@ -4,8 +4,8 @@ use serde::de::DeserializeOwned;
 use crate::{Result, error::Error};
 
 pub struct Client {
-    pub base_url: String,
-    pub api_key: String,
+    base_url: String,
+    api_key: String,
     pub(crate) http: reqwest::Client,
 }
 
@@ -21,6 +21,14 @@ impl Client {
             api_key,
             http: reqwest::Client::new(),
         })
+    }
+
+    pub fn base_url(&self) -> &str {
+        &self.base_url
+    }
+
+    pub fn api_key(&self) -> &str {
+        &self.api_key
     }
 
     pub(crate) async fn http_json_v1<T, F>(
