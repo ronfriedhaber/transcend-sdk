@@ -81,7 +81,7 @@ impl From<DatasetIpcReadOptions> for DatasetIpcReadQuery {
 
 #[derive(Debug, Clone, Copy, Default)]
 pub struct DatasetJsonReadOptions {
-    pub max_rows: Option<usize>,
+    max_rows: Option<usize>,
 }
 
 impl DatasetJsonReadOptions {
@@ -92,8 +92,8 @@ impl DatasetJsonReadOptions {
 
 #[derive(Debug, Clone, Copy, Default)]
 pub struct DatasetIpcReadOptions {
-    pub max_batches: Option<usize>,
-    pub latest: Option<bool>,
+    max_batches: Option<usize>,
+    latest: Option<bool>,
 }
 
 impl DatasetIpcReadOptions {

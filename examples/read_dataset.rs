@@ -13,23 +13,12 @@ async fn main() -> transcend_sdk::Result<()> {
     println!("metadata:\n{metadata:#?}");
 
     let rows = client
-        .dataset_json(
-            &dataset,
-            DatasetJsonReadOptions {
-                max_rows: Some(5),
-            },
-        )
+        .dataset_json(&dataset, DatasetJsonReadOptions::new(Some(5)))
         .await?;
     println!("json rows:\n{rows:#?}");
 
     let batches = client
-        .dataset_ipc(
-            &dataset,
-            DatasetIpcReadOptions {
-                max_batches: Some(1),
-                latest: Some(true),
-            },
-        )
+        .dataset_ipc(&dataset, DatasetIpcReadOptions::new(Some(1), Some(true)))
         .await?;
     println!("ipc batches: {}", batches.len());
 
