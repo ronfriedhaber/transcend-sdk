@@ -1,4 +1,4 @@
-use mpera::program::Program;
+use mpera_frontend::program::Program;
 use serde::{Deserialize, Serialize};
 
 use crate::{Result, client::Client};

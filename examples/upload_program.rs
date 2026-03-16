@@ -1,4 +1,4 @@
-use mpera::program::Program;
+use mpera_frontend::program::Program;
 
 mod common;
 
