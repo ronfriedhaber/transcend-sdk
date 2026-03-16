@@ -1,9 +1,11 @@
+pub mod read;
 pub mod upload;
 
 use serde::{Deserialize, Serialize};
 
 use crate::{Result, client::Client};
 
+pub use read::{DatasetIpcReadOptions, DatasetJsonReadOptions};
 pub use upload::DatasetResponse;
 
 impl Client {
