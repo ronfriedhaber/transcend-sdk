@@ -1,6 +1,10 @@
+pub mod upload;
+
 use serde::{Deserialize, Serialize};
 
 use crate::{Result, client::Client};
+
+pub use upload::DatasetResponse;
 
 impl Client {
     pub async fn datasets(&self) -> Result<ListDatasetsResponse> {

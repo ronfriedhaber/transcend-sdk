@@ -4,6 +4,5 @@ pub mod datasets;
 pub mod error;
 pub mod metadata;
 pub mod programs;
-pub mod upload;
 
 pub type Result<T> = std::result::Result<T, crate::error::Error>;
