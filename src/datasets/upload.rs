@@ -4,38 +4,30 @@ use serde::{Deserialize, Serialize};
 
 use crate::{Result, arrow::encode_record_batches_ipc, client::Client};
 
-impl Client {
-    pub async fn upload_dataset(
-        &self,
-        batches: Vec<RecordBatch>,
-        alias: Option<String>,
-        author: Option<String>,
-    ) -> Result<DatasetResponse> {
-        let payload = encode_record_batches_ipc(&batches)?;
-        let query = dataset_upload_query(alias, author);
+pub(crate) async fn upload_dataset(
+    client: &Client,
+    workspace_id: &str,
+    batches: Vec<RecordBatch>,
+    alias: Option<String>,
+) -> Result<DatasetResponse> {
+    let payload = encode_record_batches_ipc(&batches)?;
+    let query = dataset_upload_query(workspace_id, alias);
 
-        self.http_json_v1(reqwest::Method::POST, "/datasets", |request| {
+    client
+        .http_json_v1(reqwest::Method::POST, "/api/v1/dataset/upload", |request| {
             request
                 .query(&query)
                 .header(header::CONTENT_TYPE, "application/octet-stream")
                 .body(payload)
         })
         .await
-    }
 }
 
-fn dataset_upload_query(
-    alias: Option<String>,
-    author: Option<String>,
-) -> Vec<(&'static str, String)> {
-    let mut query = vec![("format", "ipc".to_string())];
+fn dataset_upload_query(workspace_id: &str, alias: Option<String>) -> Vec<(&'static str, String)> {
+    let mut query = vec![("workspace_id", workspace_id.to_string())];
 
     if let Some(alias) = alias {
         query.push(("alias", alias));
-    }
-
-    if let Some(author) = author {
-        query.push(("author", author));
     }
 
     query
@@ -43,8 +35,11 @@ fn dataset_upload_query(
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct DatasetResponse {
-    pub id: String,
-    pub size_bytes: u64,
-    pub chunk_count: u64,
-    pub alias: Option<String>,
+    pub dataset_id: String,
+    pub workspace_id: String,
+    pub alias: String,
+    pub bytes_received: usize,
+    pub owner: String,
+    pub object_key: String,
+    pub created_at: String,
 }

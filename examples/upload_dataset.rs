@@ -21,12 +21,9 @@ async fn main() -> transcend_sdk::Result<()> {
     )?;
 
     let client = common::client_from_env_default()?;
-    let response = client
-        .upload_dataset(
-            vec![batch],
-            Some("example-upload".to_string()),
-            Some("transcend-sdk-example".to_string()),
-        )
+    let workspace = common::workspace_from_env_default(&client)?;
+    let response = workspace
+        .upload_dataset(vec![batch], Some("example-upload".to_string()))
         .await?;
 
     println!("{response:#?}");

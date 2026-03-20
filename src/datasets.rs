@@ -3,34 +3,18 @@ pub mod upload;
 
 use serde::{Deserialize, Serialize};
 
-use crate::{Result, client::Client};
-
-pub use read::{DatasetIpcReadOptions, DatasetJsonReadOptions};
 pub use upload::DatasetResponse;
-
-impl Client {
-    pub async fn datasets(&self) -> Result<ListDatasetsResponse> {
-        self.http_json_v1(reqwest::Method::GET, "/datasets", |request| request)
-            .await
-    }
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ListDatasetsResponse {
-    pub datasets: Vec<DatasetMetadata>,
-}
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct DatasetMetadata {
     pub id: String,
-    pub author: String,
-    pub is_output: bool,
-    pub created_at_ms: u64,
-    pub last_updated_ms: u64,
-    pub size_bytes: u64,
-    pub chunk_count: u64,
-    pub alias: Option<String>,
-    pub schema: Option<DatasetSchema>,
+    pub workspace_id: String,
+    pub owner: String,
+    pub alias: String,
+    pub byte_size: i64,
+    pub object_key: String,
+    pub created_at: String,
+    pub updated_at: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

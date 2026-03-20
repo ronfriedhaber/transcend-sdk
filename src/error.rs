@@ -5,6 +5,10 @@ use thiserror::Error;
 pub enum Error {
     #[error("api key must not be empty")]
     EmptyApiKey,
+    #[error("workspace id must not be empty")]
+    EmptyWorkspaceId,
+    #[error("name must not be empty")]
+    EmptyName,
     #[error("record batches must not be empty")]
     EmptyRecordBatches,
     #[error("arrow serialization failed: {0}")]

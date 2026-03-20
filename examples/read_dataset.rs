@@ -1,25 +1,12 @@
-use transcend_sdk::datasets::{DatasetIpcReadOptions, DatasetJsonReadOptions};
-
 mod common;
 
 #[tokio::main]
 async fn main() -> transcend_sdk::Result<()> {
-    let dataset = std::env::var("TRANSCEND_DATASET")
-        .expect("TRANSCEND_DATASET must be set to a dataset id or alias");
+    let dataset_id =
+        std::env::var("TRANSCEND_DATASET_ID").expect("TRANSCEND_DATASET_ID must be set");
 
     let client = common::client_from_env_default()?;
-
-    let metadata = client.dataset(&dataset).await?;
-    println!("metadata:\n{metadata:#?}");
-
-    let rows = client
-        .dataset_json(&dataset, DatasetJsonReadOptions::new(Some(5)))
-        .await?;
-    println!("json rows:\n{rows:#?}");
-
-    let batches = client
-        .dataset_ipc(&dataset, DatasetIpcReadOptions::new(Some(1), Some(true)))
-        .await?;
+    let batches = client.read_dataset_ipc(dataset_id).await?;
     println!("ipc batches: {}", batches.len());
 
     Ok(())

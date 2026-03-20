@@ -8,7 +8,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let program = program.dataframe(None)?.alias("row_count", None)?;
 
     let client = common::client_from_env_default()?;
-    let response = client
+    let workspace = common::workspace_from_env_default(&client)?;
+    let response = workspace
         .upload_program(&program, Some("transcend-sdk-example-program".to_string()))
         .await?;
 
