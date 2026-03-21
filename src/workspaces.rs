@@ -42,8 +42,26 @@ impl Client {
         .await
     }
 
+    pub async fn delete_workspace(&self, workspace_id: impl AsRef<str>) -> Result<Workspace> {
+        let workspace_id = workspace_id.as_ref().trim();
+        if workspace_id.is_empty() {
+            return Err(Error::EmptyWorkspaceId);
+        }
+
+        self.http_json_v1(
+            reqwest::Method::DELETE,
+            &format!("/api/v1/workspaces/{workspace_id}"),
+            |request| request,
+        )
+        .await
+    }
+
     pub async fn read_dataset_ipc(&self, dataset_id: impl AsRef<str>) -> Result<Vec<RecordBatch>> {
         datasets::read::read_dataset_ipc(self, dataset_id.as_ref()).await
+    }
+
+    pub async fn list_datasets(&self) -> Result<Vec<datasets::DatasetMetadata>> {
+        datasets::list::list_datasets(self, None).await
     }
 }
 
@@ -71,6 +89,10 @@ impl<'a> WorkspaceClient<'a> {
         alias: Option<String>,
     ) -> Result<DatasetResponse> {
         datasets::upload::upload_dataset(self.client, &self.workspace_id, batches, alias).await
+    }
+
+    pub async fn list_datasets(&self) -> Result<Vec<datasets::DatasetMetadata>> {
+        datasets::list::list_datasets(self.client, Some(&self.workspace_id)).await
     }
 }
 
