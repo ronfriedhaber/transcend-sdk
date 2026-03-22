@@ -5,6 +5,8 @@ use thiserror::Error;
 pub enum Error {
     #[error("api key must not be empty")]
     EmptyApiKey,
+    #[error("run id must not be empty")]
+    EmptyRunId,
     #[error("workspace id must not be empty")]
     EmptyWorkspaceId,
     #[error("name must not be empty")]
