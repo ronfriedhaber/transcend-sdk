@@ -1,4 +1,4 @@
-use reqwest::{Method, header};
+use reqwest::Method;
 use serde::de::DeserializeOwned;
 
 use crate::{Result, error::Error};
@@ -47,7 +47,7 @@ impl Client {
             path.trim_start_matches('/')
         );
         let request = configure(self.http.request(method, url))
-            .header(header::AUTHORIZATION, format!("Bearer {}", self.api_key));
+            .header("x-api-key", &self.api_key);
 
         let response = request.send().await?;
         let status = response.status();
@@ -75,7 +75,7 @@ impl Client {
             path.trim_start_matches('/')
         );
         let request = configure(self.http.request(method, url))
-            .header(header::AUTHORIZATION, format!("Bearer {}", self.api_key));
+            .header("x-api-key", &self.api_key);
 
         let response = request.send().await?;
         let status = response.status();
