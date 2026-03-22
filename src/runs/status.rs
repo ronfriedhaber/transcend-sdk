@@ -1,5 +1,3 @@
-use std::collections::BTreeMap;
-
 use serde::{Deserialize, Serialize};
 
 use crate::{Result, client::Client, error::Error};
@@ -27,20 +25,11 @@ pub(crate) async fn run_status(client: &Client, run_id: String) -> Result<GetRun
 pub enum RunStatus {
     Queued,
     Leased,
+    Running,
     Done,
+    Completed,
     Dead,
 }
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(untagged)]
-pub enum RunScalar {
-    Number(serde_json::Number),
-    String(String),
-    Boolean(bool),
-}
-
-pub type RunOutputTable = BTreeMap<String, Vec<Option<RunScalar>>>;
-pub type RunOutput = BTreeMap<String, RunOutputTable>;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GetRunStatusResponse {
@@ -51,10 +40,10 @@ pub struct GetRunStatusResponse {
     pub dataset_id: String,
     pub submitted_by: String,
     pub status: RunStatus,
-    pub attempts: u32,
-    pub max_attempts: u32,
+    pub attempts: i64,
+    pub max_attempts: i64,
     pub last_error: Option<String>,
-    pub output: Option<RunOutput>,
+    pub output: Option<serde_json::Value>,
     pub created_at: String,
     pub updated_at: String,
 }
