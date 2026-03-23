@@ -7,8 +7,9 @@ impl Client {
         &self,
         program_id: impl Into<String>,
         dataset_id: impl Into<String>,
+        hardware: HardwareKind,
     ) -> Result<RunResponse> {
-        submit_run(self, RunRequest::new(program_id, dataset_id)).await
+        submit_run(self, RunRequest::new(program_id, dataset_id, hardware)).await
     }
 }
 
@@ -20,17 +21,29 @@ pub(crate) async fn submit_run(client: &Client, request: RunRequest) -> Result<R
         .await
 }
 
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+pub enum HardwareKind {
+    CpuBasic,
+    GpuBasic,
+}
+
 #[derive(Debug, Clone, Serialize)]
 pub struct RunRequest {
     program_id: String,
     dataset_id: String,
+    hardware: HardwareKind,
 }
 
 impl RunRequest {
-    pub fn new(program_id: impl Into<String>, dataset_id: impl Into<String>) -> Self {
+    pub fn new(
+        program_id: impl Into<String>,
+        dataset_id: impl Into<String>,
+        hardware: HardwareKind,
+    ) -> Self {
         Self {
             program_id: program_id.into(),
             dataset_id: dataset_id.into(),
+            hardware,
         }
     }
 }
