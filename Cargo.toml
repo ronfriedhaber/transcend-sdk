@@ -15,4 +15,4 @@ thiserror = "2"
 arrow-array = "56"
 arrow-ipc = "56"
 arrow-schema = "56"
-autark-frontend = { path = "../../../autarkfusion/autark/crates/autark-frontend" }
+autark-frontend = { version = "0.1.0", git = "https://github.com/Modolap/autark.git", package = "autark-frontend" }
