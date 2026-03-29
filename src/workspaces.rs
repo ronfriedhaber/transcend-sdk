@@ -1,5 +1,5 @@
 use arrow_array::RecordBatch;
-use mpera_frontend::program::Program;
+use autark_frontend::Query;
 use serde::{Deserialize, Serialize};
 
 use crate::{
@@ -77,10 +77,10 @@ impl<'a> WorkspaceClient<'a> {
 
     pub async fn upload_program(
         &self,
-        program: &Program,
+        query: &Query,
         alias: Option<String>,
     ) -> Result<ProgramResponse> {
-        upload::upload_program(self.client, &self.workspace_id, program, alias).await
+        upload::upload_program(self.client, &self.workspace_id, query, alias).await
     }
 
     pub async fn upload_dataset(
