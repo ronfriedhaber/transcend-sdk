@@ -90,7 +90,9 @@ impl<'a> SerializableDataset<'a> {
             },
             Dataset::Parquet { name, path } => Self::Parquet { name, path },
             Dataset::Transcend { name, dataset_id } => Self::Transcend { name, dataset_id },
-            Dataset::InMemory { .. } => unreachable!("in-memory datasets are rejected before serialization"),
+            Dataset::InMemory { .. } => {
+                unreachable!("in-memory datasets are rejected before serialization")
+            }
         }
     }
 

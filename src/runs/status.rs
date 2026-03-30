@@ -1,3 +1,4 @@
+use base64::{Engine as _, engine::general_purpose::STANDARD};
 use serde::{Deserialize, Serialize};
 
 use crate::{Result, client::Client, error::Error};
@@ -43,7 +44,26 @@ pub struct GetRunStatusResponse {
     pub attempts: i64,
     pub max_attempts: i64,
     pub last_error: Option<String>,
-    pub output: Option<serde_json::Value>,
+    pub output: Option<RunOutput>,
     pub created_at: String,
     pub updated_at: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(tag = "format", rename_all = "snake_case")]
+pub enum RunOutput {
+    ArrowIpcBase64 { payload_base64: String },
+    LegacyJson { value: serde_json::Value },
+}
+
+impl GetRunStatusResponse {
+    pub fn output_arrow_ipc_bytes(&self) -> Result<Option<Vec<u8>>> {
+        match self.output.as_ref() {
+            None => Ok(None),
+            Some(RunOutput::ArrowIpcBase64 { payload_base64 }) => {
+                Ok(Some(STANDARD.decode(payload_base64)?))
+            }
+            Some(RunOutput::LegacyJson { .. }) => Ok(None),
+        }
+    }
 }

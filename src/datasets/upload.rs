@@ -11,6 +11,15 @@ pub(crate) async fn upload_dataset(
     alias: Option<String>,
 ) -> Result<DatasetResponse> {
     let payload = encode_record_batches_ipc(&batches)?;
+    upload_dataset_ipc_bytes(client, workspace_id, payload, alias).await
+}
+
+pub(crate) async fn upload_dataset_ipc_bytes(
+    client: &Client,
+    workspace_id: &str,
+    payload: Vec<u8>,
+    alias: Option<String>,
+) -> Result<DatasetResponse> {
     let query = dataset_upload_query(workspace_id, alias);
 
     client

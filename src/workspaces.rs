@@ -60,6 +60,10 @@ impl Client {
         datasets::read::read_dataset_ipc(self, dataset_id.as_ref()).await
     }
 
+    pub async fn read_dataset_ipc_bytes(&self, dataset_id: impl AsRef<str>) -> Result<Vec<u8>> {
+        datasets::read::read_dataset_ipc_bytes(self, dataset_id.as_ref()).await
+    }
+
     pub async fn list_datasets(&self) -> Result<Vec<datasets::DatasetMetadata>> {
         datasets::list::list_datasets(self, None).await
     }
@@ -89,6 +93,15 @@ impl<'a> WorkspaceClient<'a> {
         alias: Option<String>,
     ) -> Result<DatasetResponse> {
         datasets::upload::upload_dataset(self.client, &self.workspace_id, batches, alias).await
+    }
+
+    pub async fn upload_dataset_ipc_bytes(
+        &self,
+        payload: Vec<u8>,
+        alias: Option<String>,
+    ) -> Result<DatasetResponse> {
+        datasets::upload::upload_dataset_ipc_bytes(self.client, &self.workspace_id, payload, alias)
+            .await
     }
 
     pub async fn list_datasets(&self) -> Result<Vec<datasets::DatasetMetadata>> {

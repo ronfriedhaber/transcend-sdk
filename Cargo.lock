@@ -425,9 +425,9 @@ checksum = "1505bd5d3d116872e7271a6d4e16d81d0c8570876c8de68093a09ac269d8aac0"
 [[package]]
 name = "autark-frontend"
 version = "0.1.0"
-source = "git+https://github.com/Modolap/autark.git#8f5e0b6ffabea234616c36e9f668b2ab2558803d"
 dependencies = [
  "datafusion",
+ "serde",
 ]
 
 [[package]]
@@ -3220,6 +3220,7 @@ dependencies = [
  "arrow-ipc 56.2.0",
  "arrow-schema 56.2.0",
  "autark-frontend",
+ "base64",
  "reqwest",
  "serde",
  "serde_json",

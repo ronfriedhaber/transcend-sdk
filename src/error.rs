@@ -17,6 +17,8 @@ pub enum Error {
     UnsupportedQueryDataset(&'static str),
     #[error("arrow serialization failed: {0}")]
     Arrow(#[from] arrow_schema::ArrowError),
+    #[error("base64 decoding failed: {0}")]
+    Base64(#[from] base64::DecodeError),
     #[error("json serialization failed: {0}")]
     Json(#[from] serde_json::Error),
     #[error("request failed: {0}")]
